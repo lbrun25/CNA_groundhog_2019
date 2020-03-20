@@ -23,4 +23,5 @@ func main() {
         printHelp()
         os.Exit(84)
     }
+    groundhog.Groundhog()
 }
