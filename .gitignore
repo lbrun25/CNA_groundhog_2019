@@ -7,4 +7,3 @@ CMakeLists.txt
 cmake-build-debug/
 pkg/
 bin/
-groundhog
