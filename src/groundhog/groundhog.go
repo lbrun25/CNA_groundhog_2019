@@ -2,9 +2,16 @@ package groundhog
 
 import (
 	"fmt"
+	"os"
+	"strconv"
+	"utils"
 )
 
-func getG() *float32 {
+// Temperatures - values written in the input by the user
+var Temperatures []float64
+var periodLoopIsFinished bool = false
+
+func getG() *float64 {
 	return nil
 }
 
@@ -12,7 +19,12 @@ func getR() *int {
 	return nil
 }
 
-func getS() *float32 {
+func getS() *float64 {
+	if periodLoopIsFinished {
+		variance := utils.GetStandardDeviation(Temperatures)
+		res := &variance
+		return res
+	}
 	return nil
 }
 
@@ -23,7 +35,7 @@ func printTemperatureIncreaseAverage() {
 	if g == nil {
 		fmt.Printf("nan")
 	} else {
-		fmt.Printf("%d", g)
+		fmt.Printf("%.2f", *g)
 	}
 }
 
@@ -32,9 +44,9 @@ func printRelativeTemperatureEvolution() {
 
 	fmt.Printf("\t\tr=")
 	if r == nil {
-		fmt.Printf("nan")
+		fmt.Printf("nan%%")
 	} else {
-		fmt.Printf("%d", r)
+		fmt.Printf("%d%%", *r)
 	}
 }
 
@@ -45,27 +57,46 @@ func printStandardDeviation() {
 	if s == nil {
 		fmt.Printf("nan")
 	} else {
-		fmt.Printf("%d", s)
+		fmt.Printf("%.2f", *s)
 	}
 	fmt.Printf("\n")
 }
 
-func periodLoop() {
-	for i := 0; i < Period; i++ {
-		var input string
-		fmt.Scanln(&input)
-		if !CheckTemperatureFormat(input) {
-			i--;
-			continue;
-		}
-		printTemperatureIncreaseAverage()
-		printRelativeTemperatureEvolution()
-		printStandardDeviation()
+func handleStop(input string) {
+	if input == "STOP" {
+		os.Exit(0)
 	}
+}
+
+func convertStringToFloat(str string) float64 {
+	s, err := strconv.ParseFloat(str, 64)
+
+	if err != nil {
+		panic(err)
+	}
+	return s
 }
 
 // Groundhog - main
 func Groundhog() {
-	periodLoop();
-	// To do: Detect a tendency and compute values
+	var input string
+
+	for i := 0; ; i++ {
+		fmt.Scanln(&input)
+
+		if input == "STOP" {
+			break
+		}
+		if !CheckTemperatureFormat(input) {
+			i--
+			continue
+		}
+		if (i >= Period) {
+			periodLoopIsFinished = true
+		}
+		Temperatures = append(Temperatures, convertStringToFloat(input))
+		printTemperatureIncreaseAverage()
+		printRelativeTemperatureEvolution()
+		printStandardDeviation()
+	}
 }
