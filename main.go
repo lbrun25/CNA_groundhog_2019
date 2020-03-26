@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"os"
-	"groundhog"
+    "fmt"
+    "groundhog"
+    "os"
 )
 
 func printHelp() {
