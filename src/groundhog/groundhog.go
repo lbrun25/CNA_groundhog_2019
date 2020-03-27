@@ -2,8 +2,6 @@ package groundhog
 
 import (
 	"fmt"
-	"os"
-	"strconv"
 	"utils"
 )
 
@@ -16,12 +14,19 @@ func getG() *float64 {
 }
 
 func getR() *int {
+	if periodLoopIsFinished {
+		originalNumber := utils.GetAverage(Temperatures)
+		newNumber := Temperatures[len(Temperatures) - 1]
+		percentageIncrease := int(utils.GetPercentageIncrease(originalNumber, newNumber))
+		res := &percentageIncrease
+		return res
+	}
 	return nil
 }
 
 func getS() *float64 {
 	if periodLoopIsFinished {
-		variance := utils.GetStandardDeviation(Temperatures)
+		variance := utils.GetStandardDeviation(Temperatures, Period)
 		res := &variance
 		return res
 	}
@@ -62,26 +67,11 @@ func printStandardDeviation() {
 	fmt.Printf("\n")
 }
 
-func handleStop(input string) {
-	if input == "STOP" {
-		os.Exit(0)
-	}
-}
-
-func convertStringToFloat(str string) float64 {
-	s, err := strconv.ParseFloat(str, 64)
-
-	if err != nil {
-		panic(err)
-	}
-	return s
-}
-
 // Groundhog - main
 func Groundhog() {
 	var input string
 
-	for i := 0; ; i++ {
+	for i := 1; ; i++ {
 		fmt.Scanln(&input)
 
 		if input == "STOP" {
@@ -94,7 +84,7 @@ func Groundhog() {
 		if (i >= Period) {
 			periodLoopIsFinished = true
 		}
-		Temperatures = append(Temperatures, convertStringToFloat(input))
+		Temperatures = append(Temperatures, utils.ConvertStringToFloat(input))
 		printTemperatureIncreaseAverage()
 		printRelativeTemperatureEvolution()
 		printStandardDeviation()

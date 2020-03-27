@@ -15,7 +15,7 @@ func GetAverage(values []float64) float64 {
 }
 
 // GetStandardDeviation - compute variance
-func GetStandardDeviation(values []float64) float64 {
+func GetStandardDeviation(values []float64, period int) float64 {
 	var res float64 = 0.0
 	var squareValues float64 = 0.0
 	average := GetAverage(values)
@@ -23,7 +23,7 @@ func GetStandardDeviation(values []float64) float64 {
 	for _, value := range values {
 		squareValues += math.Pow(value - average, 2)
 	}
-	res = math.Sqrt(squareValues / 7)
+	res = math.Sqrt(squareValues / float64(period))
 	return res
 }
 
