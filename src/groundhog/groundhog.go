@@ -8,15 +8,21 @@ import (
 
 // Temperatures - values written in the input by the user
 var Temperatures []float64
-var periodLoopIsFinished bool = false
 
 func getG() *float64 {
+	// if len(Temperatures) > Period {
+	// 	originalNumber := Temperatures[len(Temperatures) - Period - 1]
+	// 	newNumber := Temperatures[len(Temperatures) - 1]
+	// 	percentageIncrease := int(utils.GetPercentageIncrease(originalNumber, newNumber))
+	// 	res := &percentageIncrease
+	// 	return res
+	// }
 	return nil
 }
 
 func getR() *int {
-	if periodLoopIsFinished {
-		originalNumber := utils.GetAverage(Temperatures)
+	if len(Temperatures) > Period {
+		originalNumber := Temperatures[len(Temperatures) - Period - 1]
 		newNumber := Temperatures[len(Temperatures) - 1]
 		percentageIncrease := int(utils.GetPercentageIncrease(originalNumber, newNumber))
 		res := &percentageIncrease
@@ -26,7 +32,7 @@ func getR() *int {
 }
 
 func getS() *float64 {
-	if periodLoopIsFinished {
+	if len(Temperatures) >= Period {
 		variance := utils.GetStandardDeviation(Temperatures, Period)
 		res := &variance
 		return res
@@ -80,9 +86,6 @@ func Groundhog() {
 		}
 		if !CheckTemperatureFormat(input) {
 			os.Exit(84)
-		}
-		if (i >= Period) {
-			periodLoopIsFinished = true
 		}
 		Temperatures = append(Temperatures, utils.ConvertStringToFloat(input))
 		printTemperatureIncreaseAverage()
