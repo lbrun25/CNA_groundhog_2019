@@ -3,6 +3,7 @@ package groundhog
 import (
 	"fmt"
 	"utils"
+	"os"
 )
 
 // Temperatures - values written in the input by the user
@@ -78,8 +79,7 @@ func Groundhog() {
 			break
 		}
 		if !CheckTemperatureFormat(input) {
-			i--
-			continue
+			os.Exit(84)
 		}
 		if (i >= Period) {
 			periodLoopIsFinished = true

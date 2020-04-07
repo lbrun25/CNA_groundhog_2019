@@ -12,7 +12,7 @@ const (
 	noArg = "There is no argument.\n"
 	mustBeInteger = "The argument must be a positive integer.\n"
 	mustBeGreatherThanTwo = "Impossible to detect a tendency if the argument is less than or equal to 2.\n"
-	wrongTemperatureFormat = "Wrong temperature format, the format must be a one decimal digit."
+	wrongTemperatureFormat = "Wrong temperature format, the format must be a decimal digit."
 )
 
 // Period - number of days (the argument)
