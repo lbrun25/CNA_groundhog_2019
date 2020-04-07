@@ -6,8 +6,15 @@ import (
 	"os"
 )
 
+const (
+	impossibleToCalculate = "Impossible to calculate tendency switched and weirdest values without calculating all values over the given period."
+	tab = "       "
+)
+
 // Temperatures - values written in the input by the user
 var Temperatures []float64
+// CountSwitchOccurs - count switches
+var CountSwitchOccurs int
 
 func getG() *float64 {
 	if len(Temperatures) > Period {
@@ -52,7 +59,8 @@ func printTemperatureIncreaseAverage() {
 func printRelativeTemperatureEvolution() {
 	var r = getR()
 
-	fmt.Printf("\t\tr=")
+	fmt.Printf(tab)
+	fmt.Printf("r=")
 	if r == nil {
 		fmt.Printf("nan%%")
 	} else {
@@ -63,7 +71,8 @@ func printRelativeTemperatureEvolution() {
 func printStandardDeviation() {
 	var s = getS()
 
-	fmt.Printf("\t\ts=")
+	fmt.Printf(tab)
+	fmt.Printf("s=")
 	if s == nil {
 		fmt.Printf("nan")
 	} else {
@@ -74,10 +83,25 @@ func printStandardDeviation() {
 func printSwitchOccurs() {
 	if len(Temperatures) > Period + 1 {
 		if utils.IsSwitchOccurs(Temperatures, Period) {
-			fmt.Printf("\t\ta switch occurs")
+			fmt.Printf(tab)
+			fmt.Printf("a switch occurs")
+			CountSwitchOccurs++
 		}
 	}
 	fmt.Println("")
+}
+
+func printResults() {
+	if (len(Temperatures) < Period) {
+		fmt.Println(impossibleToCalculate)
+		os.Exit(84)
+	}
+	fmt.Println("Global tendency switched", CountSwitchOccurs, "times")
+	printWeirdestValues()
+}
+
+func printWeirdestValues() {
+
 }
 
 // Groundhog - main
@@ -99,4 +123,5 @@ func Groundhog() {
 		printStandardDeviation()
 		printSwitchOccurs()
 	}
+	printResults()
 }
