@@ -10,13 +10,11 @@ import (
 var Temperatures []float64
 
 func getG() *float64 {
-	// if len(Temperatures) > Period {
-	// 	originalNumber := Temperatures[len(Temperatures) - Period - 1]
-	// 	newNumber := Temperatures[len(Temperatures) - 1]
-	// 	percentageIncrease := int(utils.GetPercentageIncrease(originalNumber, newNumber))
-	// 	res := &percentageIncrease
-	// 	return res
-	// }
+	if len(Temperatures) > Period {
+		percentageIncrease := utils.GetIncreaseAverage(Temperatures, Period)
+		res := &percentageIncrease
+		return res
+	}
 	return nil
 }
 
@@ -24,7 +22,7 @@ func getR() *int {
 	if len(Temperatures) > Period {
 		originalNumber := Temperatures[len(Temperatures) - Period - 1]
 		newNumber := Temperatures[len(Temperatures) - 1]
-		percentageIncrease := int(utils.GetPercentageIncrease(originalNumber, newNumber))
+		percentageIncrease := int(utils.GetEvolutionRate(originalNumber, newNumber))
 		res := &percentageIncrease
 		return res
 	}
@@ -78,7 +76,7 @@ func printStandardDeviation() {
 func Groundhog() {
 	var input string
 
-	for i := 1; ; i++ {
+	for ;; {
 		fmt.Scanln(&input)
 
 		if input == "STOP" {
