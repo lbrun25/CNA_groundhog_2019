@@ -49,3 +49,20 @@ func GetIncreaseAverage(values []float64, period int) float64 {
 	}
 	return GetAveragePeriod(maxValues, period)
 }
+
+// IsSwitchOccurs - is a switch occurs ?
+func IsSwitchOccurs(values []float64, period int) bool {
+	first := values[len(values) - 1]
+	second := values[len(values) - period - 1]
+	currentEstimation := math.Round((first / second - 1) * 100)
+
+	first = values[len(values) - 2]
+	second = values[len(values) - period - 2]
+	prevEstimation := math.Round((first / second - 1) * 100)
+
+	sumAbs := math.Abs(prevEstimation + currentEstimation) 
+	if sumAbs != math.Abs(prevEstimation) + math.Abs(currentEstimation) {
+		return true
+	}
+	return false
+}

@@ -69,7 +69,15 @@ func printStandardDeviation() {
 	} else {
 		fmt.Printf("%.2f", *s)
 	}
-	fmt.Printf("\n")
+}
+
+func printSwitchOccurs() {
+	if len(Temperatures) > Period + 1 {
+		if utils.IsSwitchOccurs(Temperatures, Period) {
+			fmt.Printf("\t\ta switch occurs")
+		}
+	}
+	fmt.Println("")
 }
 
 // Groundhog - main
@@ -89,5 +97,6 @@ func Groundhog() {
 		printTemperatureIncreaseAverage()
 		printRelativeTemperatureEvolution()
 		printStandardDeviation()
+		printSwitchOccurs()
 	}
 }
