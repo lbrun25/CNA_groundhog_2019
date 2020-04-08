@@ -3,12 +3,12 @@ package groundhog
 import (
 	"fmt"
 	"utils"
-	"math"
 	"os"
 )
 
 const (
 	impossibleToCalculate = "Impossible to calculate tendency switched and weirdest values without calculating all values over the given period."
+	temperatureEqualToZero = "Impossible to calculate any value with a temperature strictly equal to zero."
 	tab = "       "
 )
 
@@ -51,7 +51,7 @@ func getS() *float64 {
 	if len(Temperatures) >= Period {
 		variance := utils.GetStandardDeviation(Temperatures, Period)
 		res := &variance
-		StandardDeviations = append(StandardDeviations, math.Round(*res * 100) / 100)
+		StandardDeviations = append(StandardDeviations, *res)
 		return res
 	}
 	return nil
@@ -117,6 +117,7 @@ func printSwitchOccurs() {
 
 func printWeirdestValues() {
 	weirdestValues := utils.GetWeirdestValues(Temperatures, BollingerBands, Period)
+
 	for i := len(weirdestValues) - 1; i != -1; i-- {
 		value := weirdestValues[i]
 		fmt.Printf("%.1f", value)
@@ -137,6 +138,19 @@ func printResults() {
 	printWeirdestValues()
 }
 
+func appendTemperature(input string) {
+	if !CheckTemperatureFormat(input) {
+		os.Exit(84)
+	}
+	temperature := utils.ConvertStringToFloat(input)
+	if temperature == 0 {
+		fmt.Println(temperatureEqualToZero)
+		os.Exit(84)
+	} else {
+		Temperatures = append(Temperatures, temperature)
+	}
+}
+
 // Groundhog - main
 func Groundhog() {
 	var input string
@@ -147,10 +161,7 @@ func Groundhog() {
 		if input == "STOP" {
 			break
 		}
-		if !CheckTemperatureFormat(input) {
-			os.Exit(84)
-		}
-		Temperatures = append(Temperatures, utils.ConvertStringToFloat(input))
+		appendTemperature(input)
 		printTemperatureIncreaseAverage()
 		printRelativeTemperatureEvolution()
 		printStandardDeviation()
