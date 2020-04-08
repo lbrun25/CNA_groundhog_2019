@@ -81,18 +81,18 @@ func GetBollingerBand(values []float64, movingAverages []float64, standardDeviat
 }
 
 // GetWeirdestValues - get weirdest values on the period
-func GetWeirdestValues(values []float64, bollingerBands []float64, period int) []float64 {
+func GetWeirdestValues(values []float64, bollingerBands []float64, period int, limit int) []float64 {
 	var absList []float64
 	var sortedAbsList []float64
 	var resList []float64
 
 	for _, value := range bollingerBands {
-		absList = append(absList, math.Abs(value - .5))
+		absList = append(absList, math.Abs(value - float64(limit) / 10))
 	}
 	sortedAbsList = make([]float64, len(absList))
 	copy(sortedAbsList, absList)
 	sort.Float64s(sortedAbsList)
-	sortedAbsList = sortedAbsList[len(sortedAbsList) - 5:]
+	sortedAbsList = sortedAbsList[len(sortedAbsList) - limit:]
 	for _, value := range sortedAbsList {
 		index := SliceFloatIndex(absList, value) + period - 1
 		resList = append(resList, values[index])

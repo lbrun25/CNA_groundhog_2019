@@ -7,9 +7,11 @@ import (
 )
 
 const (
-	impossibleToCalculate = "Impossible to calculate tendency switched and weirdest values without calculating all values over the given period."
+	impossibleToCalculateSwitch = "Impossible to calculate tendency switched and weirdest values without calculating all values over the given period."
 	temperatureEqualToZero = "Impossible to calculate any value with a temperature strictly equal to zero."
+	notEnoughWeirdestValues = "There aren't enough values to calculate weirdest values."
 	tab = "       "
+	limit = 5
 )
 
 // Temperatures - values written in the input by the user
@@ -116,8 +118,12 @@ func printSwitchOccurs() {
 }
 
 func printWeirdestValues() {
-	weirdestValues := utils.GetWeirdestValues(Temperatures, BollingerBands, Period)
-
+	if (len(Temperatures) < Period + 4) {
+		fmt.Println(notEnoughWeirdestValues)
+		os.Exit(84)
+	}
+	weirdestValues := utils.GetWeirdestValues(Temperatures, BollingerBands, Period, limit)
+	fmt.Printf("5 weirdest values are [")
 	for i := len(weirdestValues) - 1; i != -1; i-- {
 		value := weirdestValues[i]
 		fmt.Printf("%.1f", value)
@@ -130,11 +136,10 @@ func printWeirdestValues() {
 
 func printResults() {
 	if (len(Temperatures) < Period) {
-		fmt.Println(impossibleToCalculate)
+		fmt.Println(impossibleToCalculateSwitch)
 		os.Exit(84)
 	}
 	fmt.Println("Global tendency switched", CountSwitchOccurs, "times")
-	fmt.Printf("5 weirdest values are [")
 	printWeirdestValues()
 }
 
@@ -143,7 +148,7 @@ func appendTemperature(input string) {
 		os.Exit(84)
 	}
 	temperature := utils.ConvertStringToFloat(input)
-	if temperature == 0 {
+	if temperature == 0.0 {
 		fmt.Println(temperatureEqualToZero)
 		os.Exit(84)
 	} else {
