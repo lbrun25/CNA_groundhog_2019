@@ -3,6 +3,7 @@ package groundhog
 import (
 	"fmt"
 	"utils"
+	"math"
 	"os"
 )
 
@@ -13,8 +14,18 @@ const (
 
 // Temperatures - values written in the input by the user
 var Temperatures []float64
+
 // CountSwitchOccurs - count switches
 var CountSwitchOccurs int
+
+// MovingAverages - list of moving averages
+var MovingAverages []float64
+
+// StandardDeviations - list of standard deviations
+var StandardDeviations []float64
+
+// BollingerBands - list of Bollinger bands
+var BollingerBands []float64
 
 func getG() *float64 {
 	if len(Temperatures) > Period {
@@ -40,9 +51,22 @@ func getS() *float64 {
 	if len(Temperatures) >= Period {
 		variance := utils.GetStandardDeviation(Temperatures, Period)
 		res := &variance
+		StandardDeviations = append(StandardDeviations, math.Round(*res * 100) / 100)
 		return res
 	}
 	return nil
+}
+
+func appendMovingAverage() {
+	if len(Temperatures) >= Period {
+		MovingAverages = append(MovingAverages, utils.GetAveragePeriod(Temperatures, Period))
+	}
+}
+
+func appendBollingerBands() {
+	if len(Temperatures) >= Period {
+		BollingerBands = append(BollingerBands, utils.GetBollingerBand(Temperatures, MovingAverages, StandardDeviations))
+	}
 }
 
 func printTemperatureIncreaseAverage() {
@@ -91,17 +115,26 @@ func printSwitchOccurs() {
 	fmt.Println("")
 }
 
+func printWeirdestValues() {
+	weirdestValues := utils.GetWeirdestValues(Temperatures, BollingerBands, Period)
+	for i := len(weirdestValues) - 1; i != -1; i-- {
+		value := weirdestValues[i]
+		fmt.Printf("%.1f", value)
+		if i != 0 {
+			fmt.Printf(", ")
+		}
+	}
+	fmt.Println("]")
+}
+
 func printResults() {
 	if (len(Temperatures) < Period) {
 		fmt.Println(impossibleToCalculate)
 		os.Exit(84)
 	}
 	fmt.Println("Global tendency switched", CountSwitchOccurs, "times")
+	fmt.Printf("5 weirdest values are [")
 	printWeirdestValues()
-}
-
-func printWeirdestValues() {
-
 }
 
 // Groundhog - main
@@ -122,6 +155,8 @@ func Groundhog() {
 		printRelativeTemperatureEvolution()
 		printStandardDeviation()
 		printSwitchOccurs()
+		appendMovingAverage()
+		appendBollingerBands()
 	}
 	printResults()
 }
